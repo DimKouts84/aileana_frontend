@@ -1,7 +1,8 @@
 import streamlit as st
 from streamlit_cookies_manager import EncryptedCookieManager
-import os, psycopg2, re
+import psycopg2, re
 from dotenv import load_dotenv
+from . import databases
 
 load_dotenv()
 
@@ -21,17 +22,10 @@ def init_sidebar_auth():
     if "submitted" not in st.session_state:
         st.session_state.submitted = False
 
-    def get_postresql_connection():
-        return psycopg2.connect(
-            host=os.getenv('POSTGRES_HOST'),
-            database=os.getenv('POSTGRES_DB'),
-            user=os.getenv('POSTGRES_USER'),
-            password=os.getenv('POSTGRES_PASS')
-        )
 
     def insert_user(email):
         try:
-            conn = get_postresql_connection()
+            conn = databases.connect_pg_conn()
             cursor = conn.cursor()
             cursor.execute("INSERT INTO users (email) VALUES (%s)", (email,))
             conn.commit()
