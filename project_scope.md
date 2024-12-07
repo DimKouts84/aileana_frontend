@@ -88,3 +88,16 @@ The terms and conditions will mention that the user queries are stored for analy
 [[:NEEDS {name: "NEEDS"}], [:REQUIRES {name: "REQUIRES"}], [:HAS {name: "HAS"}], [:OFFERS {name: "OFFERS"}], [:POSTS {name: "POSTS"}]]
 ```
 
+**Node labels**
+
+["INDUSTRY"] : ["industry_name", "standardized_industry_name"]
+
+["JOB"] : ["employment_type", "employment_model", "job_seniority", "minimum_level_of_education", "standardized_occupation", "job_title", "country", "job_reference", "job_description"]
+
+["SKILL"] : ["skill_name", "skill_category", "skill_type"]
+
+["EXPERIENCE"] : ["minimum_years", "years_required"]
+
+["BENEFIT"] : ["benefit_name"]
+
+["RESPONSIBILITY"] " ["description"]

@@ -59,5 +59,12 @@ def get_job_categories_data():
     # print(df)
     return df
 
+
+def get_job_data_from_Cypher(query):
+    with driver.session() as session:
+        result = session.run(query)
+        data = [record.data() for record in result]
+    return data
+
 # get_job_categories_data()
 

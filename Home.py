@@ -12,6 +12,7 @@ st.set_page_config(
 
 from components import sidebar_auth, widgets, visualizations
 
+
 #  ~~~~~~~~ Sidebar ~~~~~~~~ 
 # Initialize auth in sidebar
 user_email = sidebar_auth.init_sidebar_auth()
@@ -36,8 +37,7 @@ st.write("\n")
 st.write("\n")
 st.write('''
 ### **What's the Secret Sauce 🧪?**
-Aileana is not just a simple chatbot 🤖.
-The magic happens behind the scenes, where a framework of AI agents performs powerful operations on job postings:
+Aileana is not just a simple chatbot 🤖, the magic happens behind the scenes, where a framework of AI agents performs powerful operations on job postings:
 
 - Data extraction and analysis
 - Cleaning and classification of key parameters including:
@@ -47,6 +47,7 @@ The magic happens behind the scenes, where a framework of AI agents performs pow
   - Work Experience and Education Levels 🎓
   - Type of Employment (Full-time, Part-time, etc.) 🕒  
   - And other attributes hidden in unstructured text.
+\n All of these stored into a Knowledge Graph Database to efficiently query and retrieve information.
 \n You will be able to explore more on the how to in the [About](About) page and for more into the technical details of the process in the [Github](https://github.com/DimKouts84) page.
 ''')
 
