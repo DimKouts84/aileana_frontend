@@ -45,7 +45,7 @@ def init_sidebar_auth():
         terms_accepted = st.session_state.terms_accepted
         
         if not is_valid_email(user_email):
-            st.sidebar.error("Please enter a valid email address.")
+            st.sidebar.error("**Please enter a valid email address.")
         elif not terms_accepted:
             st.sidebar.error("Please accept the terms and conditions.")
         else:
@@ -72,8 +72,8 @@ def init_sidebar_auth():
         else:
             # st.warning("Please identify yourself")
             with st.form("email_form"):
-                st.text_input("Enter your email:", key="email_input")
-                st.checkbox("I accept the terms and conditions", key="terms_accepted")
+                st.text_input("Enter your email **to login**:", key="email_input")
+                st.checkbox("I accept the [Terms and Conditions](About#terms-and-conditions) ", key="terms_accepted")
                 st.form_submit_button("Submit", on_click=submit_form)
 
     return cookies.get('user_email') if 'user_email' in cookies else None

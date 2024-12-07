@@ -1,5 +1,5 @@
 import streamlit as st
-from . import databases
+from components import databases
 import pandas as pd
 import plotly.express as px
 
