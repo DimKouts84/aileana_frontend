@@ -1,8 +1,9 @@
 import streamlit as st
 from dotenv import load_dotenv
-import os
 import shelve
-
+from components import databases as db
+import datetime
+ 
 load_dotenv()
 
 # Load chat history from shelve file
@@ -67,7 +68,7 @@ def query_to_occupational_analyst(question, data_from_chatbot):
     Your role is to take data provided by a data engineer and answer to the User's questions.'''
     promt = f'''You will receive a question from a user
     {question}?'''
-    with driver.session() as session:
+    with db.driver.session() as session:
         query = f""" Answer to the user's question based on the data provided by the data engineer.
         The data: {data_from_chatbot} \n
         The user's question: {question}

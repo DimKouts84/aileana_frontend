@@ -1,7 +1,7 @@
 import streamlit as st
 from components import sidebar_auth
 from components import databases as db
-
+from components import llm as llm 
 
 # Page Configuration
 st.set_page_config(
@@ -17,7 +17,7 @@ CHATBOT_AVATAR = "😎"
 # Initialize auth in sidebar
 user_email = sidebar_auth.init_sidebar_auth()
 
-st.title("You personal AI Analyst")
+st.title("You personal AI Occupational Analyst and Career Coach")
 st.write("An advanced LLM chatbot with a comprehensive understanding of the job market, designed to help individuals navigate their career paths and keep professionals updated on the latest market trends.")
 
 
