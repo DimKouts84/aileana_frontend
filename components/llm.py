@@ -1,6 +1,10 @@
 from dotenv import load_dotenv
 from . import databases as db 
-# import databases as db 
+from . import visualizations as viz
+# import databases as db
+# import visualizations as viz
+import pandas as pd
+import plotly.express as px
 import os, requests, time
 
 load_dotenv()
@@ -107,6 +111,25 @@ occupational_analyst_system_prompt = f'''
     Your output is always VERY professional and informative.
     '''
 
+visualizations_system_prompt = f'''
+    You are a data visualization expert.
+    Your role is to provide visualizations of the data provided by the data engineer and the occupational analyst.
+    Your output is always be a Plotly "figure" that can be used for creating visualizations.
+    Example:
+    - Examples of what will your output look like:
+        'your_output' ---> "px.treemap(df, path=["industry"], values="job_postings", title="Top 10 Industries by Number of Job Postings")"
+        'your_output' ---> "px.bar(df, x='industry', y='job_postings', title='Top 10 Industries by Number of Job Postings')"
+        or
+        'your_output' ---> "px.pie(df, names='industry', values='job_postings', title='Top 10 Industries by Number of Job Postings')"
+    - How it ill be used: 
+        "def generate_visualization(your_output):
+            fig = your_output
+            st.plotly_chart(fig)
+            return"
+    You will ONLY provide the Plotly that will be used for the visualizations. Nothing ELSE.
+    '''
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ Call LLM Function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def call_LLM_API_JSON(provider_model_to_be_used, system_prompt, user_prompt_for_parsing, temperature=0):
     # Note for Models that worked well, especially with the JSON mode:
@@ -149,7 +172,7 @@ def call_LLM_API_JSON(provider_model_to_be_used, system_prompt, user_prompt_for_
 
     except requests.RequestException as e:
         print(f"Error: {e} response from LLM API.")
-        time.sleep(60)  # Optional: wait a bit before retrying
+        # time.sleep(60)  # Optional: wait a bit before retrying
         return f"Error: {e} response from LLM API."
 
     
@@ -180,6 +203,27 @@ def query_to_occupational_analyst(occupational_analyst_system_prompt, question, 
     response = call_LLM_API_JSON(provider_model_to_be_used, occupational_analyst_system_prompt, user_promt, temperature)
     return response
 
+def query_to_visualizations(visualizations_system_prompt, question, graph_data, temperature):
+    
+    user_promt = f'''
+    You will receive the following data: {graph_data} \n
+    Based on the data, return ONLY the Plotly "figure" that can be used for creating visualizations as per the examples.
+    '''
+    
+    response = call_LLM_API_JSON(provider_model_to_be_used, visualizations_system_prompt, user_promt, temperature)
+    print(f"---- Visualization Response:\n{response}\n")
+        # Execute the returned plotting code to create actual figure
+    try:
+        # Convert DataFrame if needed
+        df = pd.DataFrame(graph_data)
+        # Safely evaluate the Plotly code
+        fig = eval(response)
+        print(f"---- Visualization Figure:\n{fig}\n")
+        return fig
+    except Exception as e:
+        print(f"Error creating visualization: {e}")
+        return None
+    return response
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ Test the LLM Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -192,10 +236,12 @@ def query_to_occupational_analyst(occupational_analyst_system_prompt, question, 
 #     graph_data = "No job related information available"
 # else:
 #     graph_data = db.get_job_data_from_Cypher(cipher_query)
-#     print(f"---- Graph Data:\n{graph_data}\n")
+#     # print(f"---- Graph Data:\n{graph_data}\n")
+#     fig = query_to_visualizations(visualizations_system_prompt, question, graph_data, 0)
+#     if fig is not None:
+#         viz.generate_visualization(graph_data, fig)
 
-# time.sleep(10)  # Optional: wait a bit before retrying
+# time.sleep(5)  # Optional: wait a bit before retrying
 
 # occupational_analyst_answer = query_to_occupational_analyst(occupational_analyst_system_prompt, question, graph_data, 1)
 # print(f"---- Occupational Analyst's Answer:\n{occupational_analyst_answer}\n")
-
