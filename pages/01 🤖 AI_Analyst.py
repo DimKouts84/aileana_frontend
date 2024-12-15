@@ -1,5 +1,5 @@
 import streamlit as st
-from components import sidebar_auth
+from components import sidebar_auth, widgets
 from components import databases as db
 from components import llm as llm
 
@@ -17,12 +17,6 @@ CHATBOT_AVATAR = "🤖"
 # Initialize auth in sidebar
 user_email = sidebar_auth.init_sidebar_auth()
 
-st.title("You AI Analyst and Career Coach")
-st.write("An advanced LLM chatbot with a comprehensive understanding of the job market, designed to help individuals navigate their career paths and keep professionals updated on the latest market trends.")
-
-
-st.write("---")
-
 # Check if user is authenticated or not
 # If not authenticated, show a warning message
 if not user_email:
@@ -37,7 +31,11 @@ if not user_email:
 # If user is authenticated
 # Show the chatbot interface
 elif user_email:
-
+    widgets.hero_section(
+        title= "AI Analyst & Career Coach",
+        subtitle="An advanced chatbot with a comprehensive understanding of the job market, designed to help individuals navigate their career paths and keep professionals updated on the latest market trends."
+    )
+        
     # Initialize session state for messages
     if 'messages' not in st.session_state:
         st.session_state.messages = []
@@ -118,7 +116,7 @@ elif user_email:
         on_change=handle_user_input
     )
 
-    # Say enjoy to users 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~   
     st.write("---") # Division Line
     st.caption("Made with ❤️ by [Dimitris Koutsomichalis](https://github.com/DimKouts84/)")
 
