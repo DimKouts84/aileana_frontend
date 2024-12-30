@@ -17,11 +17,11 @@ st.subheader("About Aileana")
 st.markdown('''
 # Aileana
 
-> **Navigating the job market one prompt at a time**.
+> **Let the job market tell you a story!**.
 
-**Aileana** is an advanced LLM chatbot with a comprehensive understanding of the job market, designed to help individuals navigate their career paths and keep professionals updated on the latest market trends.
+**Aileana**  is an agentic GenAI pipeline for automated data extraction, classification, and analysis. It is also accompanied by an LLM chatbot with a deep understanding of the job market, which assists individuals in navigating their career paths and HQ professionals write better job postings.
 
-Aileana excels at identifying and correlating  *jobs* ,  *skills* ,  *requirements* ,  *benefits* ,  *required experience* , and  *responsibilities* . Utilizing agentic workflows from state-of-the-art LLMs and Retrieval-Augmented Generation (RAG), she enhances accuracy and reliability with data sourced from recent and relevant information. The Knowledge Graph database allows the models to perform more detailed queries and deeper analysis than traditional vector embeddings in SQL databases.
+As a system of GenAI agents, “she” can expertly analyse job postings create correlations and find similarities between jobs, skills, academic knowledge, requirements, benefits, required experience, and responsibilities. Aileana achieves this by utilizing state-of-the-art LLM models and Retrieval-Augmented Generation (RAG), enhancing accuracy and reliability with data fetched from recent and real sources. The Knowledge Graph database helps the models make more detailed queries and delve deeper than traditional vector embeddings in SQL databases.
 
 ---
 
@@ -29,7 +29,7 @@ Aileana excels at identifying and correlating  *jobs* ,  *skills* ,  *requiremen
 
 **Eleana** was nearly 18 years old, facing the critical decision of choosing her career and relevant academic studies.
 
-She had a passion for Biology  *(or at least thought she did)* , but no one in her family or circle was familiar with this field, and the job prospects were uncertain 🤔.
+She had a passion for Biology *(or at least thought she did)* , but no one in her family or circle was familiar with this field, and the job prospects were uncertain 🤔.
 
 Given my background in the health domain, she asked me if pursuing Biology was a good idea. My response was something like: " *If it is your passion, follow it.* "
 
