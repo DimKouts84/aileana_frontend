@@ -157,9 +157,11 @@ visualizations_system_prompt = f'''
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ Call LLM Function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def call_LLM_API_JSON(provider_model_to_be_used, system_prompt, user_prompt_for_parsing, temperature=0, max_retries=3):
-    # Note for Models that worked well, especially with the JSON mode:
-    ## Models with the best quality of output:  lmstudio-community/Qwen2.5-14B-Instruct-Q4_K_M.gguf,  lmstudio-community/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf
-    ## Models that worked ok: MaziyarPanahi/Qwen2.5-7B-Instruct-Uncensored.Q5_K_S.gguf, bartowski/Llama-3.2-3B-Instruct-f16.gguf
+    
+    ''' Note for Models that worked well, especially with the JSON mode:
+    Models with the best quality of output:  lmstudio-community/Qwen2.5-14B-Instruct-Q4_K_M.gguf,  lmstudio-community/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf
+    Models that worked ok: MaziyarPanahi/Qwen2.5-7B-Instruct-Uncensored.Q5_K_S.gguf, bartowski/Llama-3.2-3B-Instruct-f16.gguf
+    '''
     
     # Prepare the headers 
     url = provider_url_to_be_used

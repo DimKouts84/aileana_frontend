@@ -8,88 +8,13 @@ A chatbot will be able to answer questions about the job postings based on the f
 
 ---
 
-## Pages
-
-Page 1: Home & Analytics
-Page 2: Data Analysis & Visualizations
-Page 3: Chatbot
-Page 4: What is Aileana & Contact
-
 ---
 
-## Features
+## Neo4J Database Schema
 
-- User's must be authorized to access the app
-- Analytics & Visualizaiton of job postings based on the following
-- Chatbot that can answer questions about the job postings
+**Nodes & labels**
 
-### Main Data Analytics & Visualizations
-
-- Bar chart of the top 10 job titles
-- Bar chart of the top 10 industries
-- Bar chart of the top 10 skills
-- Word cloud of the job titles
-- Word cloud of the industries
-- Word cloud of the skills
-- Scatter plot of the job titles and industries
-- Scatter plot of the job titles and skills
-- Scatter plot of the industries and skills
-- Scatter plot of the job titles and industries and skills
-
-### Data Analysis & Visualizations
-
-A user must choose:
-
-- The Field of interest: Standardized Job Titles, Industry, Skills
-- Then a specific value from a dropdown list (as returnd from the database)
-Then the user will see a visualization with all the relevant information based on their choice.
-
-### LLM Chatbot
-
-The chatbot will be able to answer questions about the job postings based on the following:
-
-- Standardized Job Titles
-- Industry
-- Skills
-- Name of the job title
-
-The user queries will be stored to gather data for analytics.
-
-### What is Aileana & Contact
-
-Just a brief description of the app and a contact form to reach out to the developers.
-
-### User Authorization
-
-Users must:
-
-- Provide an email and
-- Agree to the terms and conditions
-
-The user email will be stored into Postgress database to be used for future promotions and newletters.
-
-The terms and conditions will mention that the user queries are stored for analysis and improvement of the app.
-
----
-
-## Relevant Information
-
-### Neo4J Database Schema
-
-**Nodes**
-
-``` CYPHER
-[(:BENEFIT {name: "BENEFIT", indexes: [], constraints: []}), (:INDUSTRY {name: "INDUSTRY", indexes: [], constraints: []}), (:SKILL {name: "SKILL", indexes: [], constraints: []}), (:EXPERIENCE {name: "EXPERIENCE", indexes: [], constraints: []}), (:JOB {name: "JOB", indexes: ["embedding"], constraints: []}), (:RESPONSIBILITY {name: "RESPONSIBILITY", indexes: [], constraints: []})]
-```
-
-**Relationships**
-
-``` CYPHER
-[[:NEEDS {name: "NEEDS"}], [:REQUIRES {name: "REQUIRES"}], [:HAS {name: "HAS"}], [:OFFERS {name: "OFFERS"}], [:POSTS {name: "POSTS"}]]
-```
-
-**Node labels**
-
+```CYPHER
 ["INDUSTRY"] : ["industry_name", "standardized_industry_name"]
 
 ["JOB"] : ["employment_type", "employment_model", "job_seniority", "minimum_level_of_education", "standardized_occupation", "job_title", "country", "job_reference", "job_description"]
@@ -101,3 +26,30 @@ The terms and conditions will mention that the user queries are stored for analy
 ["BENEFIT"] : ["benefit_name"]
 
 ["RESPONSIBILITY"] " ["description"]
+
+["ACADEMIC_DEGREE"] : ["degree_name", "degree_type", "degree_category"]
+
+["CERTIFICATION"] : ["certification_name", "certification_type", "certification_category"]
+
+```
+
+**Relationships**
+
+```CYPHER
+(j:JOB)-[:REQUIRES]->(ad:ACADEMIC_DEGREE)
+
+(j:JOB)-[:HAS]->(r:RESPONSIBILITY)
+
+(j:JOB)-[:OFFERS]->(b:BENEFIT)
+
+(j:JOB)-[:REQUIRES]->(e:EXPERIENCE)
+
+(j:JOB)-[:NEEDS]->(s:SKILL)
+
+(j:JOB)-[:REQUIRES]->(c:CERTIFICATION)
+
+(j:JOB)<-[:POSTS]-(i:INDUSTRY)
+
+(i:INDUSTRY)<-[:BELONGS_TO]-(in:INDUSTRY_NAME)
+
+```

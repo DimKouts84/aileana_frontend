@@ -22,6 +22,7 @@ user_email = sidebar_auth.init_sidebar_auth()
 widgets.hero_section(
     title="Aileana",
     subtitle="👩‍💻 Navigating the job market one prompt at a time.",
+    logo_path="static/logo/aileana_logo_full.png"
 )
 
 st.write("---") # Division Line
