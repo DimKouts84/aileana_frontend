@@ -9,10 +9,9 @@ import os, requests, time
 
 load_dotenv()
 
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ LLM Models ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # OpenRouter
-or_llama33_70B_inst, llama_31_70_inst_free = 'meta-llama/llama-3.3-70b-instruct', 'meta-llama/llama-3.1-70b-instruct:free'
+or_llama33_70B_inst, llama_31_70_inst_free, qwen_25_72b = 'meta-llama/llama-3.3-70b-instruct', 'meta-llama/llama-3.1-70b-instruct:free', 'qwen/qwen-2.5-72b-instruct'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ LLM Provider Connections ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 OPENROUTER_COMPLETIONS_URL = os.getenv("OPENROUTER_COMPLETIONS_URL")
@@ -22,7 +21,7 @@ OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL")
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ LLM Provider Configuration ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 provider_url_to_be_used = OPENROUTER_COMPLETIONS_URL
 provider_key_to_be_used = OPENROUTER_API_KEY
-provider_model_to_be_used = llama_31_70_inst_free
+provider_model_to_be_used = qwen_25_72b
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ Prompts ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 graph_db_schema = '''
@@ -32,15 +31,19 @@ graph_db_schema = '''
     ["SKILL"] : ["skill_name", "skill_category", "skill_type"]
     ["EXPERIENCE"] : ["minimum_years", "years_required"]
     ["BENEFIT"] : ["benefit_name"]
-    ["RESPONSIBILITY"] : ["description"]
+    ["RESPONSIBILITY"] " ["description"]
+    ["ACADEMIC_DEGREE"] : ["degree_name", "degree_type", "degree_category"]
+    ["CERTIFICATION"] : ["certification_name", "certification_type", "certification_category"]
     
     **Relationships**
-    (INDUSTRY)-[POSTS]→(JOB)
-    (JOB)-[HAS]->(RESPONSIBILITY)
-    (JOB)-[REQUIRES]->(EXPERIENCE)
-    (JOB)-(OFFERS)->(BENEFIT)
-    (JOB)-[NEEDS]->(SKILL)
-    
+    (JOB)-[:REQUIRES]->(ACADEMIC_DEGREE)
+    (JOB)-[:HAS]->(RESPONSIBILITY)
+    (JOB)-[:OFFERS]->(BENEFIT)
+    (JOB)-[:REQUIRES]->(EXPERIENCE)
+    (JOB)-[:NEEDS]->(SKILL)
+    (JOB)-[:REQUIRES]->(CERTIFICATION)
+    (JOB)<-[:POSTS]-(INDUSTRY)
+    (INDUSTRY)<-[:BELONGS_TO]-(INDUSTRY_NAME)
     '''
 
 cypher_query_examples = '''
@@ -84,6 +87,28 @@ cypher_query_examples = '''
         'MATCH (j:JOB)
         WHERE toLower(j.employment_model) CONTAINS toLower("remote") OR toLower(j.employment_model) CONTAINS toLower("hybrid") OR toLower(j.employment_type) CONTAINS toLower("remote") OR toLower(j.employment_type) CONTAINS toLower("home")
         RETURN j.job_title AS job_title, j.standardized_occupation AS standardized_occupation, count(*) AS job_count, j.employment_model AS employment_model
+        ORDER BY job_count DESC
+        LIMIT 100'
+    
+    - **Example 6:**
+    -- Question: 'I want to know which industries require a degree in Biology.'
+    -- Cypher:
+        'MATCH (d:ACADEMIC_DEGREE)
+        WHERE toLower(d.degree_field) CONTAINS toLower("accounting")
+        MATCH (d)-[r1]-(j:JOB)-[r2]-(i:INDUSTRY)
+        RETURN i.standardized_industry_name AS industry, 
+            COUNT(*) AS job_count
+        ORDER BY job_count DESC
+        LIMIT 100'
+
+    - **Example 7:**
+    -- Question: 'I want to know which jobs require a degree in Biology.'
+    -- Cypher:
+        'MATCH (d:ACADEMIC_DEGREE)
+        WHERE toLower(d.degree_field) CONTAINS toLower("biology")
+        MATCH (d)<-[r1]-(j:JOB)
+        RETURN j.job_title AS job_title, 
+            COUNT(*) AS job_count
         ORDER BY job_count DESC
         LIMIT 100'
     '''
@@ -131,7 +156,7 @@ visualizations_system_prompt = f'''
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ Call LLM Function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def call_LLM_API_JSON(provider_model_to_be_used, system_prompt, user_prompt_for_parsing, temperature=0):
+def call_LLM_API_JSON(provider_model_to_be_used, system_prompt, user_prompt_for_parsing, temperature=0, max_retries=3):
     # Note for Models that worked well, especially with the JSON mode:
     ## Models with the best quality of output:  lmstudio-community/Qwen2.5-14B-Instruct-Q4_K_M.gguf,  lmstudio-community/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf
     ## Models that worked ok: MaziyarPanahi/Qwen2.5-7B-Instruct-Uncensored.Q5_K_S.gguf, bartowski/Llama-3.2-3B-Instruct-f16.gguf
@@ -157,23 +182,52 @@ def call_LLM_API_JSON(provider_model_to_be_used, system_prompt, user_prompt_for_
         'max_tokens': 9216
     }
     
-    try:
-        response = requests.post(url, json=payload, headers=headers)
-        # print(f"Response text: \n{response.json()}\n\n")
-        response.raise_for_status()  # Raise an error for bad status codes
-        # return response.json()['choices'][0]['message']['content']
-        succesful_response = response.json()['choices'][0]['message']['content']
-        full_response = response.json()
-        
-        if succesful_response:
-            return succesful_response
-        else:
-            return full_response
+    for attempt in range(max_retries):
+        try:
+            response = requests.post(url, json=payload, headers=headers)
+            
+            if not response.ok:
+                print(f"API Error: {response.status_code}")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)  # Exponential backoff
+                    continue
+                return None
+            
+            response_json = response.json()
+            
+            # Check if response has expected structure
+            if 'choices' not in response_json:
+                print("Unexpected API response format")
+                print(response_json)  # Display actual response for debugging
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)
+                    continue
+                return None
+            
+            content = response_json['choices'][0]['message']['content']
+            if content:
+                return content
+            else:
+                print("Empty content received from API")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)
+                    continue
+                return None
 
-    except requests.RequestException as e:
-        print(f"Error: {e} response from LLM API.")
-        # time.sleep(60)  # Optional: wait a bit before retrying
-        return f"Error: {e} response from LLM API."
+        except requests.RequestException as e:
+            print(f"Request error on attempt {attempt + 1}/{max_retries}: {str(e)}")
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+                continue
+            return f"Error: {str(e)} response from LLM API."
+        except Exception as e:
+            print(f"Unexpected error on attempt {attempt + 1}/{max_retries}: {str(e)}")
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+                continue
+            return None
+    
+    return None
 
     
     

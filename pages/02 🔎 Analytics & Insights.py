@@ -67,7 +67,24 @@ elif user_email:
                 
             with col2:
                 viz.top_industries_for_skill(skill, color_scheme='lightblue')
-        
+    
+        st.write("---") # Division Line
+            
+        # Degree analytics based on user input
+        with st.container():
+            st.write("**Type a degree and see the top job titles and industries for this degree.**")
+            st.write(" ")
+            degree = st.text_input("Enter a degree below:", "Accounting")
+            
+            # Create two columns
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                viz.top_job_titles_for_degree(degree, color_scheme='lightcoral')
+                
+            with col2:
+                viz.top_industries_for_degree(degree, color_scheme='lightcoral')
+    
     st.write(" ") # Space
     st.write(" ") # Space
     st.write(" ") # Space

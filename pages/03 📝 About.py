@@ -77,6 +77,49 @@ st.write(" ")
 st.write(" ")
 st.write("---") # Division Line
 
+# Load images first
+with open('static\graph_shcema.png', 'rb') as f:
+    graph_schema = f.read()
+with open('static\knowledge_graph_visualisation_300_job_and_3900_total_nods.png', 'rb') as f:
+    graph_visualization = f.read()
+
+# Combined text and images in one st.write
+st.write('''
+##  The Graph-RAG
+##### Retrieval Augmented Generation with Knowledge Graph Database
+
+The entire app, visualization and chat interface is powered by a Knowledge Graph Database. This architecture combines the power of graph databases with modern LLM technology to create a more intelligent and context-aware system.
+
+Unlike traditional relational databases, graph databases excel at handling complex relationships and interconnected data. In our case, this means:
+* 🔗 Better representation of job market relationships
+* ⚡ Faster querying of connected data
+* 🧩 More intuitive modeling of real-world relationships
+* 🔍 Enhanced ability to discover hidden patterns
+
+##### How RAG Enhances Aileana 🚀
+The Retrieval Augmented Generation (RAG) approach:
+1. 💾 Stores processed job market data in our graph database
+2. 🎯 Retrieves relevant information based on user queries
+3. 🧠 Augments LLM responses with factual, up-to-date data
+4. ✨ Provides more accurate and contextual answers
+''')
+
+st.write(" ")
+
+st.write('''
+         >Below is our graph schema showing how different entities relate to each other.
+         ''')         
+st.image(graph_schema, caption='Graph Database Schema and Relationships')
+
+st.write('''
+> The colored nodes represent different entity types (jobs, skills, industries, etc.), while the edges show their relationships.
+''')
+st.image(graph_visualization, caption='Graph Visualization of 300 Jobs and 3900 Total Nodes')
+
+# Some space between Paragraphs
+st.write(" ")
+st.write(" ")
+st.write("---") # Division Line
 
 st.write('''
 
@@ -90,6 +133,8 @@ This powerhouse combination makes extracting key information from job listings a
 
 While one database could suffice, I initially planned to use the PGVector add-on for PostgreSQL. However, after parsing a few thousand listings 😅, I realized leveraging LLMs (Large Language Models) for data extraction was a brilliant move for a data analysis project. This approach becomes even more exciting when combined with a Knowledge Graph database like Neo4J - it's a dream come true for my inner data geek 🔍!
 ''')
+
+
 
 # Some space between Paragraphs
 st.write(" ")
@@ -126,7 +171,7 @@ So, what's the takeaway? The fewer decisions a model has to make, the more relia
 
 if you went that far, I hope you enjoyed this tech adventure🎉!
          ''')
-         
+
 
 # Some space between Paragraphs
 st.write(" ")

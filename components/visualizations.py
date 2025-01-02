@@ -32,7 +32,7 @@ def top_industries_treemap():
     # print(df.columns)
     return
 
-# ~~~~~~ Visualization function for the Analytics & Insights Page ~~~~~~
+''' ~~~~~~~~~~~~~~~~~~~~~~~~ Visualization function for the Analytics & Insights Page ~~~~~~~~~~~~~~~~~~~~~~~~ ''' 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~ Analytics Charts with user input data ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -53,7 +53,7 @@ def top_skills_for_job_title(job_title, color_scheme='lightgreen'):
         st.warning("No matching jobs found. Try a different search term.")
         return
         
-    fig = px.bar(
+    fig = px.line(
         df,
         x='skill',
         y='skill_count',
@@ -76,8 +76,8 @@ def top_industries_for_job_title(job_title, color_scheme='lightgreen'):
     query = f"""
         MATCH (j:JOB)
         WHERE toLower(j.job_title) CONTAINS toLower('{job_title}')
-        MATCH (j)-[r]-(i:INDUSTRY)
-        RETURN i.industry_name AS industry, COUNT(*) AS job_count
+        MATCH (j)<-[:POSTS]-(i:INDUSTRY)<-[:BELONGS_TO]-(in:INDUSTRY_NAME)
+        RETURN in.industry_name AS industry, COUNT(*) AS job_count
         ORDER BY job_count DESC
         LIMIT 10
         """
@@ -87,7 +87,7 @@ def top_industries_for_job_title(job_title, color_scheme='lightgreen'):
         st.warning("No matching jobs found. Try a different search term.")
         return
         
-    fig = px.bar(
+    fig = px.line(
         df,
         x='industry',
         y='job_count',
@@ -104,6 +104,76 @@ def top_industries_for_job_title(job_title, color_scheme='lightgreen'):
     
     st.plotly_chart(fig, use_container_width=True)
     return
+
+
+# A user can type a degree and see the top 10 job titles that require that degree
+def top_job_titles_for_degree(degree_name, color_scheme='lightgreen'):
+    query = f"""
+        MATCH (d:ACADEMIC_DEGREE)
+        WHERE toLower(d.degree_field) CONTAINS toLower("{degree_name}")
+        MATCH (d)<-[:REQUIRES]-(j:JOB)
+        RETURN j.standardized_occupation AS job_title, 
+               COUNT(*) AS job_count
+        ORDER BY job_count DESC
+        LIMIT 10
+        """
+    df = db.execute_query(query)
+    
+    if df.empty:
+        st.warning("No matching degrees found. Try a different search term.")
+        return
+        
+    fig = px.bar(
+        df,
+        x='job_title',
+        y='job_count',
+        title=f"Top Job Titles for '{degree_name}'",
+        color_discrete_sequence=px.colors.sequential.Mint
+    )
+    
+    fig.update_layout(
+        xaxis_title="Job Titles",
+        yaxis_title="Number of Jobs",
+        xaxis={'categoryorder':'total descending'},
+        bargap=0.2
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    return
+
+# A user can type a degree and see the top 10 industries that require that degree
+def top_industries_for_degree(degree_name, color_scheme='lightgreen'):
+    query = f"""
+        MATCH (d:ACADEMIC_DEGREE)
+        WHERE toLower(d.degree_field) CONTAINS toLower("{degree_name}")
+        MATCH (d)-[r1]-(j:JOB)-[r2]-(i:INDUSTRY)
+        RETURN i.standardized_industry_name AS industry, 
+            COUNT(*) AS job_count
+        ORDER BY job_count DESC
+        LIMIT 10
+        """
+    df = db.execute_query(query)
+    
+    if df.empty:
+        st.warning("No matching degrees found. Try a different search term.")
+        return
+        
+    fig = px.bar(
+        df,
+        x='industry',
+        y='job_count',
+        title=f"Top Industries for '{degree_name}'",
+        color_discrete_sequence=px.colors.sequential.Mint
+    )
+    
+    fig.update_layout(
+        xaxis_title="Industries",
+        yaxis_title="Number of Jobs",
+        xaxis={'categoryorder':'total descending'},
+        bargap=0.2
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
 
 
 # ~~~~~~~~ Based on Skill name ~~~~~~~~
