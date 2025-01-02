@@ -91,14 +91,31 @@ elif user_email:
             else:
                 print(f"---- Cypher query:\n{cipher_query}.\n")
                 graph_data = db.get_job_data_from_Cypher(cipher_query)
-                # Save Query in database (use timestamp)
                 print(f"---- Graph Data:\n{graph_data}\n")
             
-            occupational_analyst_answer = llm.query_to_occupational_analyst(llm.occupational_analyst_system_prompt, user_question, graph_data, 0)
+            # Format message history for the occupational analyst
+            conversation_history = ""
+            for msg in st.session_state.messages[:-1]:  # Exclude the latest message
+                role = "User" if msg['role'] == 'user' else "Assistant"
+                conversation_history += f"{role}: {msg['message']}\n"
+            
+            # Add the current question to the conversation
+            conversation_history += f"User: {user_question}"
+            
+            # Get response from occupational analyst with conversation history
+            occupational_analyst_answer = llm.query_to_occupational_analyst(
+                llm.occupational_analyst_system_prompt,
+                conversation_history,  # Pass the full conversation history
+                graph_data,
+                0
+            )
 
-            # Generate visualization
+            # Generate visualization for the latest question only
             fig = llm.query_to_visualizations(
-                llm.visualizations_system_prompt, user_question, graph_data, 0
+                llm.visualizations_system_prompt,
+                user_question,  # Only pass the latest question
+                graph_data,
+                0
             )
 
             # Append bot's response and figure to messages
