@@ -66,7 +66,7 @@ elif user_email:
                         {CHATBOT_AVATAR} <b>AI Analyst</b>: <br><br> 
                         {msg['message']}
                         </div>''', unsafe_allow_html=True)
-                if 'figure' in msg:
+                if 'figure' in msg and msg['figure'] is not None:
                     # Display the plot
                     with col1:
                         st.plotly_chart(msg['figure'])
