@@ -1,5 +1,6 @@
 import streamlit as st
 from components.sidebar_auth import init_sidebar_auth
+from components import widgets
 
 # Page Configuration
 st.set_page_config(
@@ -13,11 +14,15 @@ st.set_page_config(
 user_email = init_sidebar_auth()
 
 
-st.subheader("About Aileana")
+widgets.hero_section(
+        title= "About Aileana",
+        subtitle="🛠️ Technical and other information on the project and the 📝 'Terms and Conditions'.",
+    )
+
 st.markdown('''
 # Aileana
 
-> **Let the job market tell you a story!**.
+> **Let the job market tell you a story!**
 
 **Aileana**  is an agentic GenAI pipeline for automated data extraction, classification, and analysis. It is also accompanied by an LLM chatbot with a deep understanding of the job market, which assists individuals in navigating their career paths and HQ professionals write better job postings.
 
@@ -60,17 +65,18 @@ st.write('''
 
 | Category                  | Technology                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Frontend**        | ![Streamlit](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                              |
-| **Backend**         | ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat&logo=python&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                       |
-| **Databases**       | ![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white) ![Neo4j](https://img.shields.io/badge/-Neo4j-008CC1?style=flat&logo=neo4j&logoColor=white)                                                                                                                                                                                                                                                                                                  |
-| **Web Scraping**    | ![Beautiful Soup](https://img.shields.io/badge/-Beautiful_Soup-FFD700?style=flat&logo=beautiful-soup&logoColor=black) ![Selenium](https://img.shields.io/badge/-Selenium-43B02A?style=flat&logo=selenium&logoColor=white)                                                                                                                                                                                                                                                                             |
-| **Data Processing** | ![Pandas](https://img.shields.io/badge/-Pandas-150458?style=flat&logo=pandas&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                       |
-| **DevOps**          | ![Docker](https://img.shields.io/badge/-Docker-2496ED?style=flat&logo=docker&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                       |
-| **LLM Frameworks**  | ![Langchain](https://img.shields.io/badge/-Langchain-FF4B4B?style=flat&logo=langchain&logoColor=white) ![OpenAI](https://img.shields.io/badge/-OpenAI-02DE20?style=flat&logo=openai&logoColor=Green) ![Groq](https://img.shields.io/badge/-Groq-FFA200?style=flat&logo=groq&logoColor=Orange) ![Llama 3](https://img.shields.io/badge/-Llama_3-150458?style=flat&logo=llama3&logoColor=blue) ![Hugging Face](https://img.shields.io/badge/-Hugging_Face-FFD700?style=flat&logo=huggingface&logoColor=white) |
+| **Frontend**           | ![Streamlit](https://img.shields.io/badge/-Streamlit-FF4B4B?style=flat&logo=streamlit&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                              |
+| **Backend**            | ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat&logo=python&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Databases**          | ![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white) ![Neo4j](https://img.shields.io/badge/-Neo4j-008CC1?style=flat&logo=neo4j&logoColor=white)                                                                                                                                                                                                                                                                                                  |
+| **Web Scraping**       | ![Beautiful Soup](https://img.shields.io/badge/-Beautiful_Soup-FFD700?style=flat&logo=beautiful-soup&logoColor=black) ![Selenium](https://img.shields.io/badge/-Selenium-43B02A?style=flat&logo=selenium&logoColor=white)                                                                                                                                                                                                                                                                             |
+| **Data Processing**    | ![Pandas](https://img.shields.io/badge/-Pandas-150458?style=flat&logo=pandas&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Data Visualization** | ![Plotly](https://img.shields.io/badge/-Plotly-239120?style=flat&logo=plotly&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **DevOps**             | ![Docker](https://img.shields.io/badge/-Docker-2496ED?style=flat&logo=docker&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **GenAI Tect Stack**   | ![Langchain](https://img.shields.io/badge/-Langchain-FF4B4B?style=flat&logo=langchain&logoColor=white) ![Groq](https://img.shields.io/badge/-Groq-FFA200?style=flat&logo=groq&logoColor=Orange) ![Llama 3.2](https://img.shields.io/badge/-Ollama-FF4B4B?style=flat&logo=ollama&logoColor=white) ![Qwen 2.5](https://img.shields.io/badge/-Qwen-FF4B4B?style=flat&logo=qwen&logoColor=white) ![Hugging Face](https://img.shields.io/badge/-Hugging_Face-FFD700?style=flat&logo=huggingface&logoColor=white) ![OpenRouter](https://img.shields.io/badge/-OpenRouter-43B02A?style=flat&logo=openrouter&logoColor=white) |
 
 
-**Note**: Feel free to can use the `requirements.txt` to `pip install` all dependancies in the project environment.         
-         ''')
+> Feel free to can use the `requirements.txt` to `pip install` all dependancies in the project environment.         
+''')
 
 # Some space between Paragraphs
 st.write(" ")
@@ -80,8 +86,7 @@ st.write("---") # Division Line
 # Load images first
 with open('static\graph_shcema.png', 'rb') as f:
     graph_schema = f.read()
-with open('static\knowledge_graph_visualisation_300_job_and_3900_total_nods.png', 'rb') as f:
-    graph_visualization = f.read()
+
 
 # Combined text and images in one st.write
 st.write('''
@@ -111,10 +116,6 @@ st.write('''
          ''')         
 st.image(graph_schema, caption='Graph Database Schema and Relationships')
 
-st.write('''
-> The colored nodes represent different entity types (jobs, skills, industries, etc.), while the edges show their relationships.
-''')
-st.image(graph_visualization, caption='Graph Visualization of 300 Jobs and 3900 Total Nodes')
 
 # Some space between Paragraphs
 st.write(" ")

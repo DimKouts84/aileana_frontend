@@ -30,9 +30,9 @@ elif user_email:
         title="Analytics & Insights",
         subtitle="📊 🔎 Explore the data and gain insights into the job market.",
     )
-
     st.write(" ") # Space
-    
+
+
     # ~~~~~~~~~~~~~~~~~~~~~~~~ Visualizations based on user Input ~~~~~~~~~~~~~~~~~~~~~~~~
     # Job analytics based on user input
     with st.container(border = True):

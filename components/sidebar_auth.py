@@ -3,10 +3,14 @@ from streamlit_cookies_manager import EncryptedCookieManager
 import psycopg2, re
 from dotenv import load_dotenv
 from . import databases
+from . import widgets
 
 load_dotenv()
 
+
 def init_sidebar_auth():
+    widgets.side_logo_section()
+
     # Initialize the cookie manager
     cookies = EncryptedCookieManager(
         prefix="", 

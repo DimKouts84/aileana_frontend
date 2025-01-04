@@ -1,6 +1,4 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
 
 # Page Configuration
 st.set_page_config(
@@ -17,19 +15,18 @@ from components import sidebar_auth, widgets, visualizations
 # Initialize auth in sidebar
 user_email = sidebar_auth.init_sidebar_auth()
 
+#  ~~~~~~~~~~~~~~ Home Page Top Section ~~~~~~~~~~~~~~
+widgets.top_logo_section()
 
-#  ~~~~~~~~~~~~~~ Home Page Hero widget ~~~~~~~~~~~~~~
-widgets.hero_section(
-    title="Aileana",
-    subtitle="👩‍💻 Navigating the job market one prompt at a time.",
-    logo_path="static/logo/aileana_logo_full.png"
-)
+st.write(" ")
+st.markdown("#### Let the job market tell you a story 📖")
+
 
 st.write("---") # Division Line
 
 # Description of Aileana Project in a Text Box
 st.markdown('''
-### **Welcome Traveler 👋 !**
+### **Welcome Traveler !**
 This is a passion ⛃ data oriented project focused on exploring and analyzing data related to the job market [of Cyprus]. \n
 It is also an opportunity to geek out on ✨ Artificial Intelligence and the capabilities of 🤖 Large Language Models in mainly on automated data extraction, analysis, and classification.\n
 ''')
@@ -41,8 +38,8 @@ st.write(" ")
 
 
 st.write('''
-#### **What's the Secret Sauce 🧪?**
-Aileana is not just a simple chatbot 🤖, the magic happens behind the scenes, where a framework of AI agents performs powerful operations on job postings:
+#### **What's the Secret Sauce?**
+Aileana is not just a simple dashboard with charts or a chatbot, the magic 🧪 happens behind the scenes, where a custom agentic framework of LLMs perform powerful operations on the unstructured text of job postings.
 ''')
 
 # Some space between Paragraphs
@@ -99,7 +96,6 @@ st.write(" ")
 st.write(" ")
 st.write(" ")
 
-# Aileana's main features
 st.markdown('''
 #### How to Use Aileana
 
@@ -110,16 +106,32 @@ st.markdown('''
 ''')
 
 st.write("---") # Division Line
+st.write(" ")
+st.write(" ")
 
 # Top Industries Treemap
-st.write("##### Data Analysis & Insights Examples 📊") 
-# st.write("Top 10 Industries by Number of Job Postings")
-visualizations.top_industries_treemap()
-st.write(" ")
-st.write(" ")
-visualizations.top_job_titles_and_skils_sunburst()
+st.write("##### Data Analysis, Insights and Examples 📊")
 
-    # ~~~~~~~~~~~~~~~~~~~~~~~~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~   
+st.write('''
+**The Secret Weapon 🛡️**
+For a high level overview of the tech behind the scenes, the power of _GenAI_ and _LLMs_ seem the way to go. However the real magic happens in the :blue[Knowledge Graph Database].
+
+Below is a visual representation on how powerful the Knowledge Graph Database can be, by creating the appropriate nodes and relationships, of only 300 Jobs and 3.900 Total Nodes related to each other.
+''')
+
+with open('static\knowledge_graph_visualisation_300_job_and_3900_total_nods.png', 'rb') as f:
+    graph_visualization = f.read()
+    
+st.image(graph_visualization, caption="The colored nodes represent different entity types (jobs, skills, industries, etc.), while the edges show their relationships.")
+
 st.write("---") # Division Line
-st.caption("**Enjoy your journey with Aileana!** 🚀")
+
+visualizations.top_job_titles_and_skils_sunburst()
+st.write(" ")
+visualizations.top_industries_treemap()
+
+st.write("> Please, enjoy your journey with ✨ :blue[**Aileana**] and feel free go throught the rest of the pages to explore more about the project.")
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~   
+st.write("---") # Division Line
 st.caption("Made with ❤️ by [Dimitris Koutsomichalis](https://github.com/DimKouts84/)")

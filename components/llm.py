@@ -11,7 +11,7 @@ load_dotenv()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ LLM Models ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # OpenRouter
-or_llama33_70B_inst, llama_31_70_inst_free, qwen_25_72b = 'meta-llama/llama-3.3-70b-instruct', 'meta-llama/llama-3.1-70b-instruct:free', 'qwen/qwen-2.5-72b-instruct'
+or_llama33_70B_inst, llama_31_70_inst_free, qwen_25_72b, QwQ_32B_Preview = 'meta-llama/llama-3.3-70b-instruct', 'meta-llama/llama-3.1-70b-instruct:free', 'qwen/qwen-2.5-72b-instruct', 'qwen/qwq-32b-preview'
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ LLM Provider Connections ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 OPENROUTER_COMPLETIONS_URL = os.getenv("OPENROUTER_COMPLETIONS_URL")
@@ -22,8 +22,18 @@ OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL")
 provider_url_to_be_used = OPENROUTER_COMPLETIONS_URL
 provider_key_to_be_used = OPENROUTER_API_KEY
 provider_model_to_be_used = qwen_25_72b
+reasoning_model_to_be_used = QwQ_32B_Preview
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ Prompts ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+occupational_analyst_system_prompt = f'''
+    You are very excited, joyfull, kind and happy occupational expert analyst eager to answer questions about the job market in Cyprus.
+    Your role is to take data provided by a data engineer (if requested by the user) and answer to the user's questions.
+    The answer that you will provide to the user must be descriptive and ALWAYS  based on the data that you received.
+    IMPORTANT: Avoid using prior knowledge. Answer the question ONLY using data provided to you. If you need more information, ask the user to 'expand on the question'.
+    At the end of your answer, ask the user if they need more information on the subject of their query/question.
+    '''
+
 graph_db_schema = '''
     **Nodes**
     ["INDUSTRY"] : ["industry_name", "standardized_industry_name"]
@@ -129,13 +139,6 @@ data_engineer_system_prompt = f'''
     '''
 
 
-occupational_analyst_system_prompt = f'''
-    You are very excited and happy occupational expert analyst eager to answer questions about the job market in Cyprus.
-    Your role is to take data provided by a data engineer (if requested by the user) and answer to the user's questions.
-    Provide your using tables or bullet points to make your point more clear, if necessary.
-    Your output is always VERY professional and informative.
-    '''
-
 visualizations_system_prompt = f'''
     You are a data visualization expert.
     Your role is to provide visualizations of the data provided by the data engineer and the occupational analyst.
@@ -151,7 +154,11 @@ visualizations_system_prompt = f'''
             fig = your_output
             st.plotly_chart(fig)
             return"
-    You will ONLY provide the Plotly that will be used for the visualizations. Nothing ELSE.
+    
+    IMPORTANT Instructions:
+    Return ONLY the Plotly figure creation code. Do not include imports or data preprocessing.
+    Use 'df' as the DataFrame name. Example:
+    px.bar(df, x='column1', y='column2', title='Chart Title')
     '''
 
 
@@ -256,30 +263,40 @@ def query_to_occupational_analyst(occupational_analyst_system_prompt, question, 
     The data: {graph_data} \n
     '''
     
-    response = call_LLM_API_JSON(provider_model_to_be_used, occupational_analyst_system_prompt, user_promt, temperature)
+    response = call_LLM_API_JSON(reasoning_model_to_be_used, occupational_analyst_system_prompt, user_promt, temperature)
     return response
 
 def query_to_visualizations(visualizations_system_prompt, question, graph_data, temperature):
-    
     user_promt = f'''
     You will receive the following data: {graph_data} \n
-    Based on the data, return ONLY the Plotly "figure" that can be used for creating visualizations as per the examples.
+    Based on the data, return ONLY the Plotly figure creation code without imports.
     '''
     
     response = call_LLM_API_JSON(provider_model_to_be_used, visualizations_system_prompt, user_promt, temperature)
     print(f"---- Visualization Response:\n{response}\n")
-        # Execute the returned plotting code to create actual figure
+    
     try:
-        # Convert DataFrame if needed
-        df = pd.DataFrame(graph_data)
-        # Safely evaluate the Plotly code
-        fig = eval(response)
+        # Import required libraries here instead of in the response
+        import plotly.express as px
+        import pandas as pd
+        
+        # Convert string data to DataFrame if it isn't already
+        if isinstance(graph_data, str):
+            df = pd.DataFrame(eval(graph_data))
+        else:
+            df = pd.DataFrame(graph_data)
+            
+        # Execute just the figure creation code
+        local_vars = {'px': px, 'pd': pd, 'df': df}
+        fig = eval(response.split('fig =')[-1].strip(), globals(), local_vars)
+        
         print(f"---- Visualization Figure:\n{fig}\n")
         return fig
     except Exception as e:
         print(f"Error creating visualization: {e}")
         return None
-    return response
+
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ Test the LLM Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

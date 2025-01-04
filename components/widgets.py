@@ -1,14 +1,27 @@
 import streamlit as st
 
-def hero_section(title, subtitle, logo_path=None):
-    logo_html = f'<img src="{logo_path}" style="max-width: 200px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;">' if logo_path else ''
+# Section to display the Logo of the project in html
+# the relative path of the file is here: static\logo\aileana_logo_full_horizontal.png
+
+    
+def top_logo_section():
+    with open('static\logo_full_horizontal.png', 'rb') as f:
+        logo_full_horizontal = f.read()
+    st.image(logo_full_horizontal)
+
+def side_logo_section():
+    with open('static\logo_full_horizontal_light_small.png', 'rb') as f:
+        logo_full_horizontal = f.read()
+    st.logo(logo_full_horizontal, size="large")
+
+# Hero Section
+def hero_section(title, subtitle):
     st.markdown(
             f"""
             <div class="hero-section" style="padding: 50px; text-align: center;">
-                {logo_html}
-                <h1 style="font-size: 48px;">{title}</h1>
-                <p style="font-size: 24px;">{subtitle}</p>
+                <h1 font-size: 63px;">{title}</h1>
+                <p font-size: 36px;">{subtitle}</p>
             </div>
             """,
             unsafe_allow_html=True
-        )
+       )

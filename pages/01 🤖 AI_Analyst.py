@@ -33,14 +33,14 @@ if not user_email:
 elif user_email:
     widgets.hero_section(
         title= "AI Analyst & Career Coach",
-        subtitle="An advanced chatbot with a comprehensive understanding of the job market, designed to help individuals navigate their career paths and keep professionals updated on the latest market trends."
+        subtitle="An advanced chatbot with a comprehensive understanding of the job market, designed to help individuals navigate their career paths and keep professionals updated on the latest market trends.",
     )
         
     # Initialize session state for messages
     if 'messages' not in st.session_state:
         st.session_state.messages = []
 
-    st.subheader("How can I help?")
+    st.subheader("How can I help you today?")
 
     # Display chat history
     for msg in st.session_state.messages:
@@ -128,13 +128,27 @@ elif user_email:
 
     # Place the text input below the chat messages
     st.text_input(
-        "Type your message here...",
+        ":blue[**Type your message here...**]",
         key='user_input',
         on_change=handle_user_input
     )
-
+    st.write("---")
+    st.markdown(''' **Some ideas for your input:**
+    - What are the top "Soft" and "Hard" skills in demand in Cyprus?
+    - What are the job trends for Project Managers?
+    - What are the most in-demand skills for teachers?
+    - What jobs offer remote work opportunities?
+    - How many years of experience is usually required for a Data Scientist role?
+    ''')
+    
+    st.write("---")
+    
+    st.markdown(''' **Important Information:**
+    - The data used for the analysis have been extracted after mid 2024. Thus they can be used for analysis, recent trends and comparison, however they do not offer a historic representation of the job market.
+    - The AI Analyst is a work in progress and may not have all the answers. If you encounter any issues, please let us know.
+    ''')
+        
     # ~~~~~~~~~~~~~~~~~~~~~~~~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~   
     st.write("---") # Division Line
     st.caption("Made with ❤️ by [Dimitris Koutsomichalis](https://github.com/DimKouts84/)")
-
 

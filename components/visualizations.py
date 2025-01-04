@@ -12,10 +12,11 @@ def generate_visualization(df,generated_plot_figure):
     return
 
 # Visualization function for the Home Page
-def top_industries_treemap(): 
+# title="Top 10 standardized Industries by Number of Job Postings"
+def top_industries_treemap():
     query = """
-        MATCH (i:INDUSTRY)-[:POSTS]->(j:JOB)
-        RETURN i.industry_name AS industry, COUNT(j) AS job_postings
+        MATCH (i:INDUSTRY)-[r]->(j:JOB)
+        RETURN i.standardized_industry_name AS industry, COUNT(j) AS job_postings
         ORDER BY job_postings DESC
         LIMIT 10
         """
@@ -24,13 +25,50 @@ def top_industries_treemap():
         df,
         path=["industry"],
         values="job_postings",
-        title="Top 10 Industries by Number of Job Postings",
-        color_discrete_sequence=px.colors.sequential.Blues_r
-        )
-    fig.update_traces(marker=dict(cornerradius=5))
-    st.plotly_chart(fig)
-    # print(df.columns)
+        title="Top 10 Industries (NACE title) by Number of Job Postings",
+        color="job_postings",
+        color_continuous_scale="Blues"
+    )
+    st.plotly_chart(fig , use_container_width=True)
     return
+
+# A Sunburst Plot of the top 10 job titles by number of job postings and the skills required for each job title
+def top_job_titles_and_skils_sunburst():
+    query = """
+        MATCH (j:JOB)-[r]->(s:SKILL)
+        WITH j.standardized_occupation AS job_title, s.skill_name AS skill, COUNT(*) AS skill_count
+        RETURN job_title, skill, skill_count
+        ORDER BY skill_count DESC
+        Limit 200
+        """
+    df = db.execute_query(query)
+    
+    if df.empty:
+        st.warning("No data available for visualization")
+        return
+    
+    # Group by job_title and get the top 10 skills for each job
+    df = df.groupby('job_title').apply(lambda x: x.nlargest(10, 'skill_count')).reset_index(drop=True)
+    
+    # Flatten the skills list for each job title
+    df = df.explode('skill')
+    
+    fig = px.sunburst(
+        df,
+        path=['job_title', 'skill'],
+        values='skill_count',
+        title="Top Job Titles and Required Skills",
+        color='skill_count',
+        color_continuous_scale='RdBu',
+    )
+    
+    fig.update_layout(
+        margin=dict(t=50, l=25, r=25, b=25)
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    return
+
 
 ''' ~~~~~~~~~~~~~~~~~~~~~~~~ Visualization function for the Analytics & Insights Page ~~~~~~~~~~~~~~~~~~~~~~~~ ''' 
 
@@ -429,44 +467,6 @@ def top_job_titles_skills_scatter():
     st.plotly_chart(fig, use_container_width=True)
     return
 
-
-# ~~~~ Sunburst Plots ~~~~
-# A Sunburst Plot of the top 10 job titles by number of job postings and the skills required for each job title
-def top_job_titles_and_skils_sunburst():
-    query = """
-        MATCH (j:JOB)-[r]->(s:SKILL)
-        WITH j.job_title AS job_title, s.skill_name AS skill, COUNT(*) AS skill_count
-        RETURN job_title, skill, skill_count
-        ORDER BY skill_count DESC
-        Limit 500
-        """
-    df = db.execute_query(query)
-    
-    if df.empty:
-        st.warning("No data available for visualization")
-        return
-    
-    # Group by job_title and get the top 10 skills for each job
-    df = df.groupby('job_title').apply(lambda x: x.nlargest(10, 'skill_count')).reset_index(drop=True)
-    
-    # Flatten the skills list for each job title
-    df = df.explode('skill')
-    
-    fig = px.sunburst(
-        df,
-        path=['job_title', 'skill'],
-        values='skill_count',
-        title="Top Job Titles and Required Skills",
-        color='skill_count',
-        color_continuous_scale='RdBu',
-    )
-    
-    fig.update_layout(
-        margin=dict(t=50, l=25, r=25, b=25)
-    )
-    
-    st.plotly_chart(fig, use_container_width=True)
-    return
 
 
 # ~~~~ 3D Scatter Plots ~~~~
