@@ -22,29 +22,48 @@ OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL")
 provider_url_to_be_used = OPENROUTER_COMPLETIONS_URL
 provider_key_to_be_used = OPENROUTER_API_KEY
 provider_model_to_be_used = qwen_25_72b
-reasoning_model_to_be_used = QwQ_32B_Preview
+provider_reasoning_model_to_be_used = QwQ_32B_Preview
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ Prompts ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def open_prompt_files(filepath):
+    with open(filepath, 'r', encoding='utf-8') as file:
+        return file.read()
+
+# Use the function to read standardized titles
+NACE_standardized_industry_title = [
+    title.strip().strip('"').strip('\n') 
+    for title in open_prompt_files(r'static\classifications\standard_NACE.txt').strip('[]').split(',\n')
+]
+
+ISCO_standardized_occupation_title = [
+    title.strip().strip('"').strip('\n')
+    for title in open_prompt_files(r'static\classifications\standard_ISCO.txt').strip('[]').split(',\n')
+]
 
 occupational_analyst_system_prompt = f'''
-    You are very excited, joyfull, kind and happy occupational expert analyst eager to answer questions about the job market in Cyprus.
+    You are very excited, joyfull, kind and happy occupational expert analyst eager to answer questions and 'tell a story' about the job market in Cyprus.
     Your role is to take data provided by a data engineer (if requested by the user) and answer to the user's questions.
     The answer that you will provide to the user must be descriptive and ALWAYS  based on the data that you received.
-    IMPORTANT: Avoid using prior knowledge. Answer the question ONLY using data provided to you. If you need more information, ask the user to 'expand on the question'.
-    At the end of your answer, ask the user if they need more information on the subject of their query/question.
+    
+    IMPORTANT NOTES:
+    - NEVER include in you analysis any information like Company names, emails and/or job posting reference numbers.
+    - Avoid using prior knowledge. Answer the question ONLY using data provided to you. If you need more information, ask the user to 'expand on the question'.
+    - At the end of your answer, ask the user if they need more information on the subject of their query/question.
+    
     '''
 
 graph_db_schema = '''
     **Nodes**
-    ["INDUSTRY"] : ["industry_name", "standardized_industry_name"]
+    ["INDUSTRY_NAME"]: ["industry_name"]
+    ["INDUSTRY"]: ["standardized_industry_name"]
     ["JOB"] : ["employment_type", "employment_model", "job_seniority", "minimum_level_of_education", "standardized_occupation", "job_title", "country", "job_reference", "job_description"]
     ["SKILL"] : ["skill_name", "skill_category", "skill_type"]
     ["EXPERIENCE"] : ["minimum_years", "years_required"]
     ["BENEFIT"] : ["benefit_name"]
     ["RESPONSIBILITY"] " ["description"]
-    ["ACADEMIC_DEGREE"] : ["degree_name", "degree_type", "degree_category"]
+    ["ACADEMIC_DEGREE"] : ["degree_type", "degree_field"]
     ["CERTIFICATION"] : ["certification_name", "certification_type", "certification_category"]
-    
+
     **Relationships**
     (JOB)-[:REQUIRES]->(ACADEMIC_DEGREE)
     (JOB)-[:HAS]->(RESPONSIBILITY)
@@ -54,6 +73,9 @@ graph_db_schema = '''
     (JOB)-[:REQUIRES]->(CERTIFICATION)
     (JOB)<-[:POSTS]-(INDUSTRY)
     (INDUSTRY)<-[:BELONGS_TO]-(INDUSTRY_NAME)
+
+    
+    Notes: INDUSTRY refers to the Standardized Classification Title whereas INDUSTRY_NAME refers to the custome (non-standard) name given.
     '''
 
 cypher_query_examples = '''
@@ -133,9 +155,11 @@ data_engineer_system_prompt = f'''
     4. Always do a case-insensitive and fuzzy search for any properties related search.
     6. You try to use similar keywords to the user's question to retrieve the information (e.g. `software developer`, `software engineer` and `software programmer`).
     7. Never use relationships that are not mentioned in the given Graph Database Schema: {graph_db_schema}.
-    8. Here are some examples: {cypher_query_examples}
-    9. If the question does not need a Cypher query, please output `NONE` as a string.
+    8. Here are some examples: {cypher_query_examples}.
     
+    General Notes: Use the Graps Database Schema to create the Cypher queries, based on the user's question, the examples and the Standardized Industry & Occupation titles according the the user query.
+    Now generate a Cypher query compatible ONLY for Neo4j Version 5.
+    Your professional performance is measured on the quantity and quality data tha tyou willl provide to the user.
     '''
 
 
@@ -244,11 +268,23 @@ def call_LLM_API_JSON(provider_model_to_be_used, system_prompt, user_prompt_for_
 def query_to_data_engineer(data_engineer_system_prompt, question, temperature):
     
     user_promt = f'''
-    Based on the user's question provide a Cypher query to retrieve the information from the Neo4J Database. 
+    Your task:
+    Read the user's question provide ONE Cypher query to retrieve the information from the Neo4J Database. 
     The question:{question}.
     
-    Output if it is required by the question. The Cypher MUST as a string (e.g.: MATCH (j:JOB)-[r]-(s:SKILL)) NOT as Markdown (e.g.: using ```cypher ... ```) 
-    Output `NONE` if the question does not need a Cypher query.
+    Read the user's question then see the database schema, structure and relationships and write ONE cyhper query to provide as much data as possible to the user. 
+    
+    Important notes:
+    1 If you want to query for industries or groupd of jobs, follow the below steps:
+        - For 'standardized_industry_name' choose one or more that match the ones found here: {NACE_standardized_industry_title}.
+        - For non standardized industry name use any custom word for the 'industry_name' property.
+    2. If you want to query for occupations or job titles, follow the below steps:
+        - The 'standardized_occupation' choose one or more that match the ones found here: {ISCO_standardized_occupation_title}.
+        - For non standardized occupation name use any custom word for the 'job_title' property.
+    3. The Cypher MUST as a string (e.g.: MATCH (j:JOB)-[r]-(s:SKILL)) NOT as Markdown (e.g.: using ```cypher ... ```).
+    
+    Now, think step by step and create a query.
+    If the question does not need a Cypher query, please output `NONE` as a string.
     '''
     
     response = call_LLM_API_JSON(provider_model_to_be_used, data_engineer_system_prompt, user_promt,temperature)
@@ -258,12 +294,16 @@ def query_to_data_engineer(data_engineer_system_prompt, question, temperature):
 def query_to_occupational_analyst(occupational_analyst_system_prompt, question, graph_data, temperature):
 
     user_promt = f'''
-    You will receive a question from a user
+    You will receive a question from a user.
     Question {question} \n
     The data: {graph_data} \n
+    Based on the data, provide a descriptive answer to the user's question.
+    NEVER include in you analysis any information like Company names, emails and/or job posting reference numbers.
+    Avoid using prior knowledge. Answer the question ONLY using data provided to you. If you need more information, ask the user to 'expand on the question'.
+    At the end of your answer, ask the user if they need more information on the subject of their query/question.
     '''
     
-    response = call_LLM_API_JSON(reasoning_model_to_be_used, occupational_analyst_system_prompt, user_promt, temperature)
+    response = call_LLM_API_JSON(provider_model_to_be_used, occupational_analyst_system_prompt, user_promt, temperature)
     return response
 
 def query_to_visualizations(visualizations_system_prompt, question, graph_data, temperature):

@@ -21,7 +21,7 @@ user_email = sidebar_auth.init_sidebar_auth()
 # If not authenticated, show a warning message
 if not user_email:
     # Show page content for authenticated users
-    st.warning("Please login to access this page")
+    st.warning("Please login to access this page. Use the sidebar on the left.")
     
     # Say enjoy to users 
     st.write("---") # Division Line
@@ -135,8 +135,8 @@ elif user_email:
     st.write("---")
     st.markdown(''' **Some ideas for your input:**
     - What are the top "Soft" and "Hard" skills in demand in Cyprus?
+    - I want to find the most taleneted web developers that use Javascript. Write a draft job ad, please.
     - What are the job trends for Project Managers?
-    - What are the most in-demand skills for teachers?
     - What jobs offer remote work opportunities?
     - How many years of experience is usually required for a Data Scientist role?
     ''')
@@ -146,6 +146,7 @@ elif user_email:
     st.markdown(''' **Important Information:**
     - The data used for the analysis have been extracted after mid 2024. Thus they can be used for analysis, recent trends and comparison, however they do not offer a historic representation of the job market.
     - The AI Analyst is a work in progress and may not have all the answers. If you encounter any issues, please let us know.
+    - New data are constantly added, so the accuracy of the chatbot responses is expected to improve over time.
     ''')
         
     # ~~~~~~~~~~~~~~~~~~~~~~~~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~   

@@ -17,7 +17,7 @@ user_email = sidebar_auth.init_sidebar_auth()
 # Rest of your page code
 if not user_email:
     # Show page content for authenticated users
-    st.warning("Please login to access this page")
+    st.warning("Please login to access this page. Use the sidebar on the left.")
     st.write(f"")
     
     # Say enjoy to users 
@@ -36,11 +36,11 @@ elif user_email:
     # ~~~~~~~~~~~~~~~~~~~~~~~~ Visualizations based on user Input ~~~~~~~~~~~~~~~~~~~~~~~~
     # Job analytics based on user input
     with st.container(border = True):
-        st.write("### Analytics based on your interests")
+        st.write("### :orange[Analytics based on your interests]")
         with st.container():
             st.write("**Type a job title and see the top skills and industries for this job.**")
             st.write(" ")
-            job_title = st.text_input("Enter a job title below:", "Accountant")
+            job_title = st.text_input(":blue[Enter a job title below:]", "Accountant")
             
             # Create two columns
             col1, col2 = st.columns(2)
@@ -57,7 +57,7 @@ elif user_email:
         with st.container():
             st.write("**Type a skill and see the top job titles and industries for this skill.**")
             st.write(" ")
-            skill = st.text_input("Enter a skill below:", "English")
+            skill = st.text_input(":blue[Enter a skill below:]", "English")
             
             # Create two columns
             col1, col2 = st.columns(2)
@@ -74,7 +74,7 @@ elif user_email:
         with st.container():
             st.write("**Type a degree and see the top job titles and industries for this degree.**")
             st.write(" ")
-            degree = st.text_input("Enter a degree below:", "Accounting")
+            degree = st.text_input(":blue[Enter a degree below:]", "Accounting")
             
             # Create two columns
             col1, col2 = st.columns(2)
@@ -92,7 +92,7 @@ elif user_email:
         
     # ~~~~~~~~~~~~~~~~~~~~~~~~ "TOP" analytics Section accross industries and job titles ~~~~~~~~~~~~~~~~~~~~~~~~   
     with st.container(border = True):
-        st.write("### Data Analytics Across Industries, Jobs and Skills")
+        st.write("### :orange[Data Analytics Across Industries, Jobs and Skills]")
 
         st.write("---") # Division Line
         with st.container():

@@ -20,18 +20,18 @@ driver = GraphDatabase.driver(neo4j_url, auth=(neo4j_user, neo4j_password))
 #  --------- PostgreSQL ---------
 # PostgreSQL DB Credentials and Connection
 host = os.getenv("POSTGRES_HOST")
-database = os.getenv("POSTGRES_DB")
-username = os.getenv("POSTGRES_USER")
-password = os.getenv("POSTGRES_PASS")
+# database = os.getenv("POSTGRES_DB")
+# username = os.getenv("POSTGRES_USER")
+# password = os.getenv("POSTGRES_PASS")
 
 # Initiate a connection to the pgDB and return cur & conn
 def connect_pg_conn(host, database, username, password):
     # Connect to Postgres
     conn = psycopg2.connect(
         host=host,
-        database=database,
-        user=username,
-        password=password,
+        # database=database,
+        # user=username,
+        # password=password,
         # timeout=30  # Increase the connection timeout to 30 seconds
     )
     cur = conn.cursor()

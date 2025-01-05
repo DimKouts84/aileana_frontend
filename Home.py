@@ -16,10 +16,14 @@ from components import sidebar_auth, widgets, visualizations
 user_email = sidebar_auth.init_sidebar_auth()
 
 #  ~~~~~~~~~~~~~~ Home Page Top Section ~~~~~~~~~~~~~~
-widgets.top_logo_section()
+# widgets.top_logo_section()
 
-st.write(" ")
-st.markdown("#### Let the job market tell you a story 📖")
+widgets.hero_section(
+    title= "AILEANA",
+    subtitle=" Let the job market tell you a story 📖",
+)
+    
+# st.markdown("#### Let the job market tell you a story 📖")
 
 
 st.write("---") # Division Line
@@ -80,30 +84,7 @@ You will be able to explore more on the how to in the [About](About) page and fo
 ''')
 
 
-st.write("---") # Division Line
 # ~~~~~~~~~~~~~~~~~~~~~~~~ How to use information ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# Aileana's main features
-st.markdown('''
-#### Main Features 🛠️
-- **Occupational Analysis**: Aileana can help you understand the job market and the skills required for different roles.
-- **Career Coaching**: Aileana can provide you with insights on how to navigate your career path.
-- **Market Trends**: Aileana can keep you updated on the latest market trends.
-''')
-
-# Some space between Paragraphs
-st.write(" ")
-st.write(" ")
-st.write(" ")
-
-st.markdown('''
-#### How to Use Aileana
-
-- **Everything in English**: All jobs are tranlated to english before being processed.
-- **Select a Feature**: Choose a feature from the sidebar to start exploring.
-- **Authenticate**: Login to access the full functionality of Aileana.
-- **Interact**: Use the input fields to interact with Aileana.
-''')
 
 st.write("---") # Division Line
 st.write(" ")

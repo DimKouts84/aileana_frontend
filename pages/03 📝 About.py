@@ -20,9 +20,7 @@ widgets.hero_section(
     )
 
 st.markdown('''
-# Aileana
-
-> **Let the job market tell you a story!**
+## 📝 A few words first...
 
 **Aileana**  is an agentic GenAI pipeline for automated data extraction, classification, and analysis. It is also accompanied by an LLM chatbot with a deep understanding of the job market, which assists individuals in navigating their career paths and HQ professionals write better job postings.
 
@@ -78,6 +76,7 @@ st.write('''
 > Feel free to can use the `requirements.txt` to `pip install` all dependancies in the project environment.         
 ''')
 
+
 # Some space between Paragraphs
 st.write(" ")
 st.write(" ")
@@ -90,7 +89,7 @@ with open('static\graph_shcema.png', 'rb') as f:
 
 # Combined text and images in one st.write
 st.write('''
-##  The Graph-RAG
+## ✨ The Graph-RAG
 ##### Retrieval Augmented Generation with Knowledge Graph Database
 
 The entire app, visualization and chat interface is powered by a Knowledge Graph Database. This architecture combines the power of graph databases with modern LLM technology to create a more intelligent and context-aware system.
@@ -115,6 +114,20 @@ st.write('''
          >Below is our graph schema showing how different entities relate to each other.
          ''')         
 st.image(graph_schema, caption='Graph Database Schema and Relationships')
+
+
+st.write(" ")
+st.write(" ")
+st.write("---") # Division Line
+
+st.markdown('''
+#### How to Use Aileana
+
+- **Everything in English**: All jobs are tranlated to english before being processed.
+- **Select a Feature**: Choose a feature from the sidebar to start exploring.
+- **Authenticate**: Login to access the full functionality of Aileana.
+- **Interact**: Use the input fields to interact with Aileana.
+''')
 
 
 # Some space between Paragraphs
@@ -178,6 +191,7 @@ if you went that far, I hope you enjoyed this tech adventure🎉!
 st.write(" ")
 st.write(" ")
 st.write(" ")
+
 st.write("---") # Division Line
 st.write("---") # Division Line
 
