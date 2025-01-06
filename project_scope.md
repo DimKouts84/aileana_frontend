@@ -33,7 +33,7 @@ A chatbot will be able to answer questions about the job postings based on the f
 
 ```
 
-**Relationships**
+**Relationships and Nodes**
 
 ```CYPHER
 (j:JOB)-[:REQUIRES]->(ad:ACADEMIC_DEGREE)
