@@ -32,12 +32,12 @@ def open_prompt_files(filepath):
 # Use the function to read standardized titles
 NACE_standardized_industry_title = [
     title.strip().strip('"').strip('\n') 
-    for title in open_prompt_files(r'static\classifications\standard_NACE.txt').strip('[]').split(',\n')
+    for title in open_prompt_files(r'static/classifications/standard_NACE.txt').strip('[]').split(',\n')
 ]
 
 ISCO_standardized_occupation_title = [
     title.strip().strip('"').strip('\n')
-    for title in open_prompt_files(r'static\classifications\standard_ISCO.txt').strip('[]').split(',\n')
+    for title in open_prompt_files(r'static/classifications/standard_ISCO.txt').strip('[]').split(',\n')
 ]
 
 occupational_analyst_system_prompt = f'''
