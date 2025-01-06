@@ -5,12 +5,12 @@ import streamlit as st
 
     
 def top_logo_section():
-    with open('static\logo_full_horizontal.png', 'rb') as f:
+    with open('static/logo_full_horizontal_light_small.png', 'rb') as f:
         logo_full_horizontal = f.read()
     st.image(logo_full_horizontal)
 
 def side_logo_section():
-    with open('static\logo_full_horizontal_light_small.png', 'rb') as f:
+    with open('static/logo_full_horizontal_light_small.png', 'rb') as f:
         logo_full_horizontal = f.read()
     st.logo(logo_full_horizontal, size="large")
 
