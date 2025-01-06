@@ -100,7 +100,7 @@ For a high level overview of the tech behind the scenes, the power of _GenAI_ an
 Below is a visual representation on how powerful the Knowledge Graph Database can be, by creating the appropriate nodes and relationships, of only 300 Jobs and 3.900 Total Nodes related to each other.
 ''')
 
-with open('static\knowledge_graph_visualisation_300_job_and_3900_total_nods.png', 'rb') as f:
+with open('static/knowledge_graph_visualisation_300_job_and_3900_total_nods.png', 'rb') as f:
     graph_visualization = f.read()
     
 st.image(graph_visualization, caption="The colored nodes represent different entity types (jobs, skills, industries, etc.), while the edges show their relationships.")

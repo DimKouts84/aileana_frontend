@@ -83,7 +83,7 @@ st.write(" ")
 st.write("---") # Division Line
 
 # Load images first
-with open('static\graph_shcema.png', 'rb') as f:
+with open('static/graph_shcema.png', 'rb') as f:
     graph_schema = f.read()
 
 
