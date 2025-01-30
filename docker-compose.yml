@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  streamlit:
+    build: .
+    container_name: aileana_ui
+    ports:
+      - "1268:1268"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:1268/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
