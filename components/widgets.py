@@ -3,6 +3,11 @@ import streamlit as st
 # Section to display the Logo of the project in html
 # the relative path of the file is here: static\logo\aileana_logo_full_horizontal.png
 
+@st.cache_data
+def load_logo():
+    with open('static/logo_full_horizontal_light_small.png', 'rb') as f:
+        logo_full_horizontal = f.read()
+    return logo_full_horizontal
     
 def top_logo_section():
     with open('static/logo_full_horizontal_light_small.png', 'rb') as f:
@@ -25,3 +30,4 @@ def hero_section(title, subtitle):
             """,
             unsafe_allow_html=True
        )
+    

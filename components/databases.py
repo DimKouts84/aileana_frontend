@@ -1,4 +1,4 @@
-# NEO4J GRAPH DB Credentials and Connection
+import streamlit as st
 import os
 from neo4j import GraphDatabase
 import psycopg2
@@ -15,16 +15,17 @@ neo4j_user = os.getenv("NEO4J_USER")
 neo4j_password = os.getenv("NEO4J_PASSWORD")
 
 # Connect to the neo4j database
-driver = GraphDatabase.driver(neo4j_url, auth=(neo4j_user, neo4j_password))
+@st.cache_resource
+def get_neo4j_driver():
+    return GraphDatabase.driver(neo4j_url, auth=(neo4j_user, neo4j_password))
+driver = get_neo4j_driver()
 
 #  --------- PostgreSQL ---------
 # PostgreSQL DB Credentials and Connection
 host = os.getenv("POSTGRES_HOST")
-# database = os.getenv("POSTGRES_DB")
-# username = os.getenv("POSTGRES_USER")
-# password = os.getenv("POSTGRES_PASS")
 
 # Initiate a connection to the pgDB and return cur & conn
+@st.cache_resource
 def connect_pg_conn(host, database, username, password):
     # Connect to Postgres
     conn = psycopg2.connect(
@@ -37,6 +38,7 @@ def connect_pg_conn(host, database, username, password):
     cur = conn.cursor()
     return cur, conn
 
+@st.cache_data
 def execute_query(query):
     # Execute the query and return the DataFrame
     with driver.session() as session:
