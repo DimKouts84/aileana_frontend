@@ -23,8 +23,6 @@ widgets.hero_section(
     subtitle=" Let the job market tell you a story 📖",
 )
     
-# st.markdown("#### Let the job market tell you a story 📖")
-
 
 st.write("---") # Division Line
 
